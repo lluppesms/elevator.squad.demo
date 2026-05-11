@@ -43,7 +43,14 @@ Start the app:
 ```bash
 dotnet run
 ```
-Open the dashboard URL provided (typically `http://localhost:18000` for Aspire dashboard).
+Open the dashboard URL provided (typically `http://localhost:17043` for Aspire dashboard).
+
+## Deployment with Azure Developer CLI
+
+This repo now supports `azd up` for provisioning and deploying the web workload (`src/ElevatorApi`) to Azure App Service.
+
+- AZD project file: `azure.yaml`
+- Setup and command guide: [`.azure/readme.md`](.azure/readme.md)
 
 ## Contributing
 

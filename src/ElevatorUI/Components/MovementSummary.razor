@@ -1,0 +1,34 @@
+@namespace ElevatorUI.Components
+
+<div class="movement-summary">
+    <h3>Movement Summary</h3>
+    <div class="summary-row cabs">
+        @foreach (var elevator in Building.Elevators)
+        {
+            <div class="cab-stat @elevator.Id">
+                <span class="cab-id">@elevator.Id</span>
+                <span class="cab-moved">@elevator.PassengersMoved moved</span>
+                <span class="cab-floor">Floor @elevator.CurrentFloor</span>
+            </div>
+        }
+    </div>
+
+    <div class="summary-row totals">
+        <div class="stat-block">
+            <span class="stat-label">Total passengers moved</span>
+            <span class="stat-value">@Building.TotalPassengersMoved</span>
+        </div>
+        <div class="stat-block">
+            <span class="stat-label">Avg wait time</span>
+            <span class="stat-value">@Building.AveragePassengerWaitTimeSeconds.ToString("F1") s</span>
+        </div>
+        <div class="stat-block">
+            <span class="stat-label">Tick</span>
+            <span class="stat-value">@Building.Tick</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public Building Building { get; set; } = default!;
+}

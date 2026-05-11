@@ -30,3 +30,8 @@
    - **Decision #4 (Backend Coverage Measurement Scope):** Standardized team measurement to exclude generated artifacts (OpenAPI types, Razor UI) and focus on ElevatorSimulation/ElevatorApi domains. Baseline: 95.30% line coverage.
    - **Decision #5 (Deployment Scaffolding Parity):** Aligned deployment scaffolding with golden repo patterns (reusable workflows, Bicep modules). Limited to web-app deployment to avoid operational risk.
    - Cross-agent orchestration logs written; decisions merged from team inbox; measurement command documented for reproducibility.
+- **2026-05-11** AZD parity pass completed against golden repo (`dadabase.demo`):
+  - Added AZD entrypoints (`azure.yaml`, `infra/azd-main.bicep`, `infra/azd-main.parameters.json`) using the same naming/file layout/token style as golden.
+  - Preserved golden AZD conventions (`AZURE_ENV_NAME`, `AZURE_LOCATION`, `web` service, App Service host, `.azure/.gitignore` handling).
+  - Adapted service/project and infra parameters only where required for Elevator architecture (`src/ElevatorApi`, `appName`, `deploymentType=webapp`).
+  - Validation: `azd version`, `az bicep build --file infra/azd-main.bicep`, `az bicep build --file infra/Bicep/main.bicep`, `dotnet build ElevatorDemo.slnx`, `dotnet test src/ElevatorTests/ElevatorTests.csproj` (existing warnings unchanged).

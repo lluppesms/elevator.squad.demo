@@ -1,0 +1,53 @@
+{
+  "agents": {
+    "mal": {
+      "persistent_name": "Mal",
+      "universe": "Firefly",
+      "created_at": "2026-05-11T10:43:30.058-05:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "kaylee": {
+      "persistent_name": "Kaylee",
+      "universe": "Firefly",
+      "created_at": "2026-05-11T10:43:30.058-05:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "wash": {
+      "persistent_name": "Wash",
+      "universe": "Firefly",
+      "created_at": "2026-05-11T10:43:30.058-05:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "zoe": {
+      "persistent_name": "Zoe",
+      "universe": "Firefly",
+      "created_at": "2026-05-11T10:43:30.058-05:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "simon": {
+      "persistent_name": "Simon",
+      "universe": "Firefly",
+      "created_at": "2026-05-11T10:43:30.058-05:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "scribe": {
+      "persistent_name": "Scribe",
+      "universe": "system",
+      "created_at": "2026-05-11T10:43:30.058-05:00",
+      "legacy_named": false,
+      "status": "active"
+    },
+    "ralph": {
+      "persistent_name": "Ralph",
+      "universe": "system",
+      "created_at": "2026-05-11T10:43:30.058-05:00",
+      "legacy_named": false,
+      "status": "active"
+    }
+  }
+}

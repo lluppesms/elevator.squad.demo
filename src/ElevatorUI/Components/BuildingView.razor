@@ -1,0 +1,62 @@
+@namespace ElevatorUI.Components
+
+<div class="building-grid">
+    @for (var floor = Building.FloorCount; floor >= 1; floor--)
+    {
+        var f = floor;
+        var waiting = Building.WaitingPassengers.TryGetValue(f, out var list) ? list : [];
+
+        <div class="floor-row">
+            <div class="floor-label">
+                <span class="floor-number">Floor @f</span>
+                <span class="floor-meta">@waiting.Count waiting</span>
+            </div>
+
+            <div class="shaft-row">
+                @foreach (var elevator in Building.Elevators)
+                {
+                    <div class="shaft-cell @(elevator.CurrentFloor == f ? "occupied" : "")">
+                        @if (elevator.CurrentFloor == f)
+                        {
+                            <div class="elevator-cab @elevator.Id" title="@elevator.Id">
+                                <span class="cab-label">@elevator.Id</span>
+                                <span class="door-state @elevator.DoorState.ToLower()">@(elevator.DoorState == "Open" ? "🟡" : "🔲")</span>
+                                <div class="cab-passengers" aria-hidden="true">
+                                    @for (var i = 0; i < elevator.Passengers.Count; i++)
+                                    {
+                                        <span class="passenger-dot">●</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="floor-waiting" aria-hidden="true">
+                @foreach (var _ in waiting)
+                {
+                    <span class="passenger-dot waiting">●</span>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="status-row">
+        <div class="floor-label-spacer"></div>
+        <div class="status-cells">
+            @foreach (var elevator in Building.Elevators)
+            {
+                <div class="shaft-header @elevator.Id">
+                    <span>@elevator.Id</span>
+                    <span class="direction-badge">@elevator.Direction</span>
+                </div>
+            }
+        </div>
+        <div class="waiting-spacer"></div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public Building Building { get; set; } = default!;
+}

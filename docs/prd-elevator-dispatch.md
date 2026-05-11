@@ -75,7 +75,7 @@ can extend in subsequent lab steps.
 - Main flow:
   1. Navigate to the project root and run `dotnet build`.
   2. Run `aspire run` to start the orchestration.
-  3. Open the dashboard URL provided (typically `http://localhost:18000` for Aspire dashboard).
+  3. Open the dashboard URL provided (typically `http://localhost:17043` for Aspire dashboard).
   4. Observe elevators moving, passengers spawning, and
      the Blazor dashboard updating in real time.
 - Alternate or error flows:

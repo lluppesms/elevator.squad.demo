@@ -1,0 +1,18 @@
+# ----------------------------------------------------------------------------------------------------
+# Pipeline used by the azd command
+# ----------------------------------------------------------------------------------------------------
+name: elevator-dispatch-azd
+
+infra:
+  provider: bicep
+  path: infra/Bicep
+  module: main
+
+pipeline:
+  provider: github
+
+services:
+  web:
+    project: ./src/ElevatorApi/
+    language: csharp
+    host: appservice
