@@ -33,8 +33,8 @@ Squad proposes a team — each member named from a persistent thematic cast. You
 In the chat, use a prompt like this:
 
 ```
-I'm starting a new project. Set up the team based on the [xxx] universe.
-Here's what I'm building -- see the docs/prd-elevator-dispatch.md file for the product requirements.
+I'm starting a new project. Set up the team based on the Firefly universe.
+Here's what I'm building: please review the docs/prd-elevator-dispatch.md file for the product requirements.
 ```
 
 ---
