@@ -5,8 +5,14 @@ name: elevator-dispatch-azd
 
 infra:
   provider: bicep
-  path: infra/Bicep
-  module: main
+  path: infra
+  module: azd-main
+
+hooks:
+  preup:
+    shell: pwsh
+    run: ./infra/scripts/ensure-azd-env.ps1
+    interactive: true
 
 pipeline:
   provider: github

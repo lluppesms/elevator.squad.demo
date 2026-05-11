@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------------------------------
-// Shared Pipeline Parameter File (Azure DevOps + GitHub Actions)
+// Shared Bicep parameter file for azd-compatible deployments
 // ----------------------------------------------------------------------------------------------------
 using './main.bicep'
 

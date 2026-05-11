@@ -22,7 +22,7 @@ param customAppSettings object = {}
 
 // --------------------------------------------------------------------------------
 var templateTag = { TemplateFile: '~website.bicep'}
-var azdTag = environmentCode == 'azd' ? { 'azd-service-name': 'web' } : {}
+var azdTag = { 'azd-service-name': 'web' }
 var tags = union(commonTags, templateTag)
 var webSiteTags = union(commonTags, templateTag, azdTag)
 

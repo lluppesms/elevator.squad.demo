@@ -5,6 +5,14 @@
 //   See https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/faq
 // ----------------------------------------------------------------------------------------------------
 param name string
+param appName string
+@allowed([
+  'webapp'
+  'appservice'
+])
+param deploymentType string = 'webapp'
+param environmentCode string = 'dev'
+param instanceNumber string = '1'
 param location string
 param runDateTime string = utcNow()
 
@@ -13,7 +21,9 @@ targetScope = 'subscription'
 
 // --------------------------------------------------------------------------------
 var tags = {
-    Application: name
+    Application: appName
+    Environment: environmentCode
+    InstanceNumber: instanceNumber
     LastDeployed: runDateTime
     'azd-env-name': name
 }
@@ -31,8 +41,9 @@ module resources './Bicep/main.bicep' = {
     scope: resourceGroup
     params: {
         location: location
-        appName: name
-        environmentCode: 'azd'
-        deploymentType: 'webapp'
+        appName: appName
+        environmentCode: environmentCode
+        instanceNumber: instanceNumber
+        deploymentType: deploymentType
     }
 }

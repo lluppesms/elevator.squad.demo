@@ -18,8 +18,8 @@ This application uses environment-level values managed by azd.
 
 The AZD project config is in [azure.yaml](../azure.yaml) and currently points to:
 
-- Infra template: `infra/Bicep/main.bicep`
-- AZD parameter file: `infra/Bicep/main.parameters.json`
+- Infra template: `infra/azd-main.bicep`
+- AZD parameter file: `infra/azd-main.parameters.json`
 - Service project: `src/ElevatorApi`
 - Service host: App Service
 
@@ -27,12 +27,17 @@ By default, AZD deploys web infrastructure and deploys the co-hosted API+UI work
 
 ## Default Infrastructure Mode
 
-`infra/Bicep/main.parameters.json` currently sets:
+`infra/azd-main.parameters.json` now sources the deployment settings from the azd environment:
 
-- `environmentCode = azd`
-- `deploymentType = webapp`
+- `APP_NAME`
+- `DEPLOYMENT_TYPE`
+- `ENVCODE`
+- `INSTANCE_NUMBER`
+- `RESOURCE_GROUP_LOCATION`
 
-That means AZD runs in web app mode and provisions the infrastructure used by the current architecture.
+On the first `azd up`, the `preup` hook prompts for any missing values and stores them in the current azd environment. `DEPLOYMENT_TYPE` defaults to `webapp`; `RESOURCE_GROUP_LOCATION` defaults to the selected Azure region.
+
+Override later with `azd env set <NAME> <value>` or inspect the current values with `azd env get-values`.
 
 ---
 

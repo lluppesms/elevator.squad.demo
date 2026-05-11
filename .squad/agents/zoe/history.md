@@ -35,3 +35,7 @@
   - Preserved golden AZD conventions (`AZURE_ENV_NAME`, `AZURE_LOCATION`, `web` service, App Service host, `.azure/.gitignore` handling).
   - Adapted service/project and infra parameters only where required for Elevator architecture (`src/ElevatorApi`, `appName`, `deploymentType=webapp`).
   - Validation: `azd version`, `az bicep build --file infra/azd-main.bicep`, `az bicep build --file infra/Bicep/main.bicep`, `dotnet build ElevatorDemo.slnx`, `dotnet test src/ElevatorTests/ElevatorTests.csproj` (existing warnings unchanged).
+- **2026-05-11** AZD env bootstrap updated for parity:
+  - `azure.yaml` now runs a `preup` hook that prompts for `APP_NAME`, `DEPLOYMENT_TYPE`, `ENVCODE`, `INSTANCE_NUMBER`, and `RESOURCE_GROUP_LOCATION` when missing.
+  - `infra/azd-main.parameters.json` now maps the azd environment variables directly into the Bicep inputs.
+  - Added `infra/Bicep/main.bicepparam` to mirror the golden repo token style and updated `.azure/readme.md` with the override flow.
