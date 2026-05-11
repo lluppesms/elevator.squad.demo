@@ -1,0 +1,156 @@
+﻿@page "/"
+@implements IAsyncDisposable
+
+<PageTitle>Elevator Dispatch Dashboard</PageTitle>
+
+<div class="dashboard">
+    <div class="status-bar">
+        <div class="status-stats">
+            <span>Tick: <strong>@(_building?.Tick ?? 0)</strong></span>
+            <span>Queued: <strong>@(_building?.TotalPending ?? 0)</strong></span>
+            <span>Waiting: <strong>@(_building?.TotalWaiting ?? 0)</strong></span>
+        </div>
+        <div class="status-badge @StatusClass">@StatusLabel</div>
+    </div>
+
+    @if (_building?.IsFinished == true)
+    {
+        <div class="alert alert-warning" role="alert">
+            <strong>Simulation complete</strong> — maximum of 1 000 ticks reached.
+            <button class="btn btn-sm btn-primary ms-3" @onclick="RestartAsync">Restart simulation</button>
+        </div>
+    }
+
+    <div class="controls-panel">
+        <div class="passenger-form">
+            <label>From floor:
+                <select @bind="_originFloor">
+                    @for (var f = 1; f <= 5; f++) { <option value="@f">@f</option> }
+                </select>
+            </label>
+            <label>To floor:
+                <select @bind="_destFloor">
+                    @for (var f = 1; f <= 5; f++) { <option value="@f">@f</option> }
+                </select>
+            </label>
+            <button class="btn btn-primary" @onclick="AddPassengerAsync" disabled="@(_building?.IsFinished == true)">Add passenger</button>
+        </div>
+        <div class="sim-controls">
+            @if (_building?.Paused == true && _building?.IsFinished != true)
+            {
+                <button class="btn btn-success" @onclick="ResumeAsync">▶ Resume simulation</button>
+            }
+            else if (_building?.IsFinished != true)
+            {
+                <button class="btn btn-warning" @onclick="PauseAsync">⏸ Pause simulation</button>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(_statusMessage))
+    {
+        <p class="status-message">@_statusMessage</p>
+    }
+
+    @if (_building is not null)
+    {
+        <BuildingView Building="_building" />
+        <MovementSummary Building="_building" />
+    }
+    else
+    {
+        <p class="connecting">Connecting to simulation…</p>
+    }
+</div>
+
+@code {
+    [Inject] private NavigationManager Nav { get; set; } = default!;
+    [Inject] private HttpClient Http { get; set; } = default!;
+
+    private HubConnection? _hub;
+    private Building? _building;
+    private int _originFloor = 1;
+    private int _destFloor = 2;
+    private string _statusMessage = string.Empty;
+
+    private string StatusLabel => _building switch
+    {
+        { IsFinished: true } => "Finished",
+        { Paused: true } => "Paused",
+        null => "Connecting",
+        _ => "Running"
+    };
+
+    private string StatusClass => _building switch
+    {
+        { IsFinished: true } => "finished",
+        { Paused: true } => "paused",
+        null => "connecting",
+        _ => "running"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load initial state via REST
+        try
+        {
+            _building = await Http.GetFromJsonAsync<Building>("/api/state");
+        }
+        catch { /* will get state via SignalR */ }
+
+        // Connect to SignalR
+        var hubUrl = Nav.ToAbsoluteUri("/buildinghub");
+        _hub = new HubConnectionBuilder()
+            .WithUrl(hubUrl)
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hub.On<Building>("BuildingState", snapshot =>
+        {
+            _building = snapshot;
+            InvokeAsync(StateHasChanged);
+        });
+
+        await _hub.StartAsync();
+    }
+
+    private async Task AddPassengerAsync()
+    {
+        if (_originFloor == _destFloor)
+        {
+            _statusMessage = "Origin and destination must differ.";
+            return;
+        }
+        try
+        {
+            var resp = await Http.PostAsJsonAsync("/api/passengers",
+                new { originFloor = _originFloor, destinationFloor = _destFloor });
+            _statusMessage = resp.IsSuccessStatusCode
+                ? $"Passenger added: floor {_originFloor} → {_destFloor}"
+                : $"Error: {await resp.Content.ReadAsStringAsync()}";
+        }
+        catch (Exception ex) { _statusMessage = $"Error: {ex.Message}"; }
+    }
+
+    private async Task PauseAsync()
+    {
+        await Http.PostAsJsonAsync("/api/control", new { paused = true });
+    }
+
+    private async Task ResumeAsync()
+    {
+        await Http.PostAsJsonAsync("/api/control", new { paused = false });
+    }
+
+    private async Task RestartAsync()
+    {
+        _statusMessage = string.Empty;
+        await Http.PostAsync("/api/restart", null);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hub is not null)
+            await _hub.DisposeAsync();
+    }
+}

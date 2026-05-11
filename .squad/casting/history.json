@@ -1,0 +1,60 @@
+{
+  "universe_usage_history": [
+    {
+      "assignment_id": "assignment-20260511-104330-firefly-01",
+      "universe": "Firefly",
+      "assigned_at": "2026-05-11T10:43:30.058-05:00"
+    }
+  ],
+  "assignment_cast_snapshots": {
+    "assignment-20260511-104330-firefly-01": {
+      "assigned_at": "2026-05-11T10:43:30.058-05:00",
+      "requested_by": "Lyle MS Luppes",
+      "project": "elevator.squad.demo",
+      "members": [
+        {
+          "name": "Mal",
+          "slug": "mal",
+          "role": "Lead",
+          "universe": "Firefly"
+        },
+        {
+          "name": "Kaylee",
+          "slug": "kaylee",
+          "role": "Frontend Dev",
+          "universe": "Firefly"
+        },
+        {
+          "name": "Wash",
+          "slug": "wash",
+          "role": "Backend Dev",
+          "universe": "Firefly"
+        },
+        {
+          "name": "Zoe",
+          "slug": "zoe",
+          "role": "DevOps Engineer",
+          "universe": "Firefly"
+        },
+        {
+          "name": "Simon",
+          "slug": "simon",
+          "role": "Tester",
+          "universe": "Firefly"
+        },
+        {
+          "name": "Scribe",
+          "slug": "scribe",
+          "role": "Session Logger",
+          "universe": "system"
+        },
+        {
+          "name": "Ralph",
+          "slug": "ralph",
+          "role": "Work Monitor",
+          "universe": "system"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ElevatorApi/ElevatorApi.csproj" />
+    <Project Path="src/ElevatorAppHost/ElevatorAppHost.csproj" />
+    <Project Path="src/ElevatorServiceDefaults/ElevatorServiceDefaults.csproj" />
+    <Project Path="src/ElevatorSimulation/ElevatorSimulation.csproj" />
+    <Project Path="src/ElevatorTests/ElevatorTests.csproj" />
+    <Project Path="src/ElevatorUI/ElevatorUI.csproj" />
+  </Folder>
+</Solution>

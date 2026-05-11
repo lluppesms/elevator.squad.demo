@@ -1,0 +1,12 @@
+# ------------------------------------------------------------------------------------------------------------------------
+# Project Configuration for GitHub Actions
+# ------------------------------------------------------------------------------------------------------------------------
+
+projects:
+  # Web Application (API hosts Blazor UI)
+  web:
+    shortName: 'web'
+    rootDirectory: 'src/ElevatorApi'
+    projectName: 'ElevatorApi'
+    testDirectory: 'src/ElevatorTests'
+    testProjectName: 'ElevatorTests'

@@ -1,0 +1,52 @@
+.app-header {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 60%, #2c5364 100%);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.app-header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0.875rem 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-brand-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.app-brand-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+}
+
+.app-brand-tagline {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.55);
+    margin-left: 0.4rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    align-self: center;
+}
+
+.app-main {
+    min-height: calc(100vh - 58px);
+    background: #f0f2f5;
+}
