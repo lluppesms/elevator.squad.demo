@@ -130,6 +130,43 @@ Reuse golden repo's (`dadabase.demo`) workflow/template pattern and Bicep module
 - App currently has one deployable workload; premature function/container paths add operational risk
 - Future: when function/container workloads introduced, extend `projects.yml`, restore deployment types, expand Bicep modules using same template pattern
 
+### 6. GitHub Actions Workflows Documentation
+- **Date:** 2026-05-11T16:05:19-05:00
+- **Author:** Zoe (DevOps)
+- **Status:** Documented
+
+#### Decision
+Created `.github/workflows-readme.md` as the canonical guide for setting up and running GitHub Actions deployment workflows in this repo.
+
+#### Rationale
+- **Operator clarity:** The concrete workflows (1-deploy-bicep, 2.1-bicep-build-deploy-webapp) and their dependencies need clear documentation.
+- **Secret setup:** Teams need explicit instructions for configuring OIDC secrets (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`) at environment level.
+- **Reusable templates:** The template workflows are internal plumbing; documenting which ones exist and how they chain together reduces support burden.
+- **Consistent tone:** Documentation matches repo conventions — clear, practical, not overly verbose.
+
+#### Documentation Scope
+1. **Workflow Overview** — Lists all templates and concrete workflows with one-line descriptions.
+2. **Deployment Sequence** — Shows the job order in the 2.1 workflow (Load Config → Infra → Build → Deploy → Smoke Test).
+3. **Required Secrets** — OIDC setup instructions (both CLI and Web UI), secret definitions, and OIDC vs. client secret trade-offs.
+4. **Custom Login Action** — Explains `.github/actions/login-action` behavior at a high level.
+5. **Config & Variables** — Documents `.github/config/projects.yml` mapping and environment variables.
+6. **Running Workflows** — Web UI and GitHub CLI examples.
+7. **Bicep Deployment Modes** — create / validate / whatIf reference.
+8. **Troubleshooting** — Common errors and resolution steps.
+9. **Code Coverage** — Notes on test/coverage baseline (95.30%) and scope.
+10. **Security Notes** — OIDC preference, credential rotation, least-privilege principle.
+
+#### Updated README
+Updated `README.md` to include a "GitHub Actions Deployment" section that:
+- Links to the new workflows doc
+- Provides quick-start summary
+- Guides operators to the detailed guide for full setup
+
+#### Impact
+- New operators can self-serve workflow setup without asking the team
+- Reduces context-switching for re-deployments
+- Establishes a reference point for future workflow changes
+
 ## Governance
 
 - All meaningful changes require team consensus

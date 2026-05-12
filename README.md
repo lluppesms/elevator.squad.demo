@@ -52,6 +52,15 @@ This repo now supports `azd up` for provisioning and deploying the web workload 
 - AZD project file: `azure.yaml`
 - Setup and command guide: [`.azure/readme.md`](.azure/readme.md)
 
+## GitHub Actions Deployment
+
+This repository includes automated GitHub Actions workflows for deploying the application to Azure. For detailed setup and usage instructions, see [`.github/workflows-readme.md`](.github/workflows-readme.md).
+
+Quick start:
+- Set up Azure OIDC secrets (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`) in GitHub
+- Run the **2.1 - Deploy Bicep/Build & Deploy Web App** workflow from the Actions tab
+- Or deploy infrastructure only with the **1 - Deploy Bicep** workflow
+
 ## Contributing
 
 Custom Copilot prompts live in `.github/prompts/`.
