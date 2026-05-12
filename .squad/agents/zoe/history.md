@@ -39,3 +39,8 @@
   - `azure.yaml` now runs a `preup` hook that prompts for `APP_NAME`, `DEPLOYMENT_TYPE`, `ENVCODE`, `INSTANCE_NUMBER`, and `RESOURCE_GROUP_LOCATION` when missing.
   - `infra/azd-main.parameters.json` now maps the azd environment variables directly into the Bicep inputs.
   - Added `infra/Bicep/main.bicepparam` to mirror the golden repo token style and updated `.azure/readme.md` with the override flow.
+- **2026-05-11** GitHub Actions workflows documentation completed:
+   - Created .github/workflows-readme.md (10-section canonical reference covering workflow overview, deployment sequence, OIDC secrets setup, custom login action, config/variables, execution methods, Bicep modes, troubleshooting, coverage scope, security).
+   - Updated README.md with "GitHub Actions Deployment" section providing quick-start summary and link to detailed workflows guide.
+   - **Decision #6 (GitHub Actions Workflows Documentation):** Documented operator setup & execution guidance; enables self-service workflow configuration without team context-switching.
+   - Rationale: New operators can follow documented patterns; reduces re-deployment overhead; establishes reference point for future workflow evolution.
