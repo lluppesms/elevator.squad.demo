@@ -7,18 +7,16 @@
 - Stakeholders: Workshop participants, facilitator
 - Status: Approved
 - Created: 2026-05-09
-- Last updated: 2026-05-09
-- Target release or lab milestone: Lab 01 – Initialize Project
+- Last updated: 2026-05-12
+- Target release or lab milestone: Labs 01-04 complete; Labs 02.03-02.06 persistence and reset workflows; Lab 03.01 PR review prompts; Azure migration preparation
 
 ## Summary
 
-Build an in-memory elevator dispatch simulation for a
-5-floor, 4-elevator building, exposed through a C# backend API
-and visualized in a real-time Blazor WebAssembly dashboard.
-The project serves as a hands-on workshop starter that
-teaches modular C# design, state management, async SignalR
-communication, and simple scheduling heuristics, all running
-within an Azure Aspire orchestration environment.
+Build an elevator dispatch simulation for a 5-floor, 4-elevator building, exposed through a C# backend API and visualized in a real-time Blazor WebAssembly dashboard. The live simulation state remains in memory, while an optional SQL Server/Azure SQL persistence path records simulation runs and passenger lifecycle events when `DatabaseConnectionString` is configured. The project serves as a hands-on workshop starter that teaches modular C# design, state management, async SignalR communication, simple scheduling heuristics, and optional database-backed event logging, all running within an Azure Aspire orchestration environment.
+
+The repository should also function as a workshop lab environment. Participants need a clear setup path, prerequisite checklist, repeatable validation commands, and discoverable Copilot customizations for prompts, skills, agents, path-specific instructions, issue metadata, PR review workflows, and Azure migration guidance.
+
+For demonstration resets, the repository may include a top-level `completed/` folder containing a facilitator reference solution copied from `workspace/`. That folder is intentionally excluded from Copilot context during rebuild labs so participants can recreate the solution from indexed prompts and visible project assets instead of using the completed implementation as source material.
 
 ## Dashboard Target State
 
@@ -26,6 +24,45 @@ The screenshot below shows the desired state of the live
 dashboard after Lab 01 is complete.
 
 ![Dashboard target state](images/live-dashboard-target-state.png)
+
+## Workshop Setup and Prerequisites
+
+### Must-Have Now
+
+| Requirement | Notes |
+| --- | --- |
+| GitHub account | Required to fork, clone, or open the assigned workshop repository. |
+| GitHub Copilot access | Required for Copilot Chat, agent mode, prompt files, and skill-driven workflows. |
+| VS Code | Primary workshop editor with GitHub Copilot and Copilot Chat extensions enabled. |
+| Git | Required for local clone, branch, commit, and pull request workflows. |
+
+### Supported Setup Paths
+
+| Path | Target User | Required Runtime |
+| --- | --- | --- |
+| GitHub Codespaces | Workshop participants who need the fastest setup | Repository devcontainer builds the runtime and tools. |
+| VS Code Dev Containers | Participants using local containers | Docker Desktop or compatible container engine plus Dev Containers extension. |
+| Manual setup | Participants who cannot use containers | .NET SDK 10.0+, Git, and optional SQL Server or Azure SQL access. |
+
+### Permissions and Policy Requirements
+
+- Most labs require repository write access and any active Copilot license.
+- Labs that use GitHub Actions, Copilot coding agent, organization-managed Copilot settings, or cloud deployment tooling may require additional organization permissions.
+- Participants in managed enterprise environments should confirm that Codespaces, Copilot agent mode, MCP servers, GitHub Actions, and required marketplace extensions are allowed before the workshop.
+
+### Pre-Configured Developer Tooling
+
+The preferred Codespaces path should provide these tools through `.devcontainer/devcontainer.json`:
+
+| Tooling Area | Expected Capability |
+| --- | --- |
+| .NET SDK | .NET SDK 10.0+ runtime, NuGet packages restored. |
+| Aspire | Aspire CLI and orchestration tooling for local development. |
+| GitHub | GitHub CLI, Copilot extensions, pull request and GitHub Actions extensions. |
+| Containers | Docker-in-Docker for containerization exercises. |
+| Database | SQL Server or Azure SQL sidecar, `DatabaseConnectionString`, init SQL, and client tools. |
+| Cloud/IaC | Azure CLI, Azure Developer CLI (`azd`), Bicep support. |
+| Agent tooling | MCP Inspector support and repository-local Copilot prompts, skills, instructions, and agents. |
 
 ## Problem Statement
 
@@ -39,24 +76,24 @@ can extend in subsequent lab steps.
 
 ## Goals
 
-- Provide a running 5-floor, 4-elevator simulation out of
-  the box after a single `aspire run` command.
-- Render a live building view with animated elevator cabs,
-  passenger dots, floor-level metadata, per-cab movement
-  totals, and average passenger wait time using Blazor Components.
-- Keep the codebase small, readable, and easy to extend in
-  a workshop setting.
-- Demonstrate async C# patterns, real-time SignalR communication,
-  Blazor WebAssembly components, and Azure Aspire orchestration.
+- Provide a running 5-floor, 4-elevator simulation out of the box after a single `aspire run` command.
+- Render a live building view with animated elevator cabs, passenger dots, floor-level metadata, per-cab movement totals, and average passenger wait time using Blazor Components.
+- Keep the codebase small, readable, and easy to extend in a workshop setting.
+- Demonstrate async C# patterns, real-time SignalR communication, Blazor WebAssembly components, and Azure Aspire orchestration.
+- Demonstrate optional Entity Framework Core integration for SQL Server/Azure SQL event persistence without making the database required for baseline use.
+- Provide workshop-grade setup documentation, validation commands, and troubleshooting guidance modeled on a hands-on lab experience.
+- Include reusable Copilot assets that demonstrate prompts, skills, instructions, agents, and repeatable verification workflows.
+- Demonstrate how small UI changes can be reviewed with GitHub Copilot Review-agent prompts through a branch and pull request workflow.
+- Support a facilitator workflow where `workspace/` can be moved to `completed/` and rebuilt from indexed prompts while preserving the completed solution as excluded reference material.
 
 ## Non-Goals
 
-- Database or persistent storage integration.
+- Making database persistence required for the core simulation.
+- Using the `completed/` reference solution as source context for Copilot during rebuild labs.
 - Authentication or authorization.
 - ML-based or optimization-library dispatch algorithms.
 - Blazor Server or Multi-tenant support.
 - Complex state management libraries (Redux, etc.).
-- Entity Framework or ORM integration.
 
 ## Users and Personas
 
@@ -121,15 +158,57 @@ can extend in subsequent lab steps.
 - Main flow:
   1. Tick counter reaches 1 000.
   2. Simulation auto-pauses and sets `finished` to true.
-  3. Status message reads "Simulation complete —
-     maximum of 1 000 ticks reached."
-  4. UI shows an alert banner and a "Restart
-     simulation" button.
+  3. Status message reads "Simulation complete — maximum of 1 000 ticks reached."
+  4. UI shows an alert banner and a "Restart simulation" button.
   5. Participant clicks "Restart simulation".
-  6. All state resets to initial values; tick resumes
-     from 0.
-- Outcome: A fresh simulation begins with no leftover
-  passengers or elevator state.
+  6. All state resets to initial values; tick resumes from 0.
+  7. If SQL Server/Azure SQL persistence is enabled, application tables are cleared before the fresh run row is created.
+- Outcome: A fresh simulation begins with no leftover passengers, elevator state, or previous persisted event history.
+
+### Use Case 5: Persist Passenger Events for Inspection
+
+- Actor: Participant
+- Trigger: Starts the app with `DatabaseConnectionString` configured.
+- Preconditions: SQL Server/Azure SQL is running and the schema has been initialized.
+- Main flow:
+  1. Start `aspire run` with `DatabaseConnectionString=Server=localhost;Database=ElevatorDispatch;...`.
+  2. Simulation runs and publishes to the Blazor dashboard.
+  3. Open Azure Data Studio or SQL Server Management Studio and query `SimulationRuns` and `PassengerEvents` tables.
+  4. Observe `Created`, `Assigned`, `Boarded`, and `Exited` records.
+- Alternate or error flows:
+  - `DatabaseConnectionString` absent: the app runs in memory and skips persistence.
+  - Database unavailable: persistence operations fail without crashing the simulation.
+- Outcome: Participants can inspect database-backed run history and passenger lifecycle events for future analytics labs.
+
+### Use Case 6: Reset Database Tables for a Clean Demo
+
+- Actor: Participant or facilitator
+- Trigger: Runs the reset-all-tables prompt or clicks **Restart simulation** in the UI.
+- Preconditions: SQL Server/Azure SQL is running.
+- Main flow:
+  1. Verify expected tables exist.
+  2. Execute `DELETE FROM PassengerEvents; DELETE FROM SimulationRuns;` (preserving schema).
+  3. Confirm the simulation is paused.
+  4. Confirm row counts are reset.
+- Alternate or error flows:
+  - App is still running: a fresh `SimulationRuns` row or new passenger events may appear immediately after restart.
+- Outcome: Database state is aligned with the visible simulation lifecycle.
+
+### Use Case 7: Review a Small UI Color Change PR
+
+- Actor: Participant
+- Trigger: Creates a branch and pull request that changes a single elevator cab color.
+- Preconditions: Repository has a Review-agent prompt under `.github/prompts/` and the participant can open pull requests.
+- Main flow:
+  1. Create a feature branch for the cab color change.
+  2. Modify CSS in `ElevatorUI/Components/` for a cab color (e.g., green to teal).
+  3. Commit and push the feature branch.
+  4. Open a pull request with a focused change description.
+  5. Invoke the GitHub Copilot Review agent with the corresponding `03.01` prompt.
+- Alternate or error flows:
+  - Review finds unrelated code changes: participant narrows the PR to the intended CSS change.
+  - Review finds contrast or readability issues: participant adjusts the color or text treatment.
+- Outcome: Participant practices using Copilot Review for a small, scoped UI pull request.
 
 ## Functional Requirements
 
@@ -157,16 +236,30 @@ can extend in subsequent lab steps.
 | FR-020 | The UI shall show an alert banner and a "Restart simulation" button when the simulation finishes. | Must | |
 | FR-021 | POST `/api/restart` shall reset all simulation state to initial values and resume ticking from 0. | Must | |
 | FR-022 | Each elevator cab shall have a distinct color: ev-01 green, ev-02 blue, ev-03 purple, ev-04 medium grey. | Must | Applied via CSS class per cab |
+| FR-023 | The repository README shall provide tutorial-style setup paths, prerequisites, validation commands, repository tour, and troubleshooting. | Must | Modeled on hands-on lab structure |
+| FR-024 | The repository shall include reusable Copilot prompts and skills for repeatable lab operations. | Should | Prompt and skill files under `.github/` |
+| FR-025 | The devcontainer shall provide optional SQL Server schema inspection support without making persistence mandatory. | Should | SQL Server sidecar, init SQL, and client tools |
+| FR-026 | When `DatabaseConnectionString` is set, the simulation shall write run metadata to `SimulationRuns`. | Must | Optional persistence path |
+| FR-027 | When `DatabaseConnectionString` is set, passenger lifecycle events shall be written to `PassengerEvents`. | Must | Events: `Created`, `Assigned`, `Boarded`, `Exited` |
+| FR-028 | POST `/api/restart` shall clear SQL Server application tables before creating the fresh run row. | Must | Applies only when persistence is enabled |
+| FR-029 | The repository shall include prompt files for table reset, reset-on-restart, GitHub issue-type discovery, PR review, and Azure migration preparation. | Should | Prompts `02.05`, `02.06`, `03.00`, `03.01`, `04.00`, `04.01` |
+| FR-030 | Azure deployment conventions shall be captured in path-scoped instructions for `workspace/**`. | Should | `.github/instructions/azure-deployment.instructions.md` |
+| FR-031 | The repository shall include GitHub Copilot Review-agent prompts that require a branch, focused change, pull request, and scoped review criteria. | Should | Cab color prompt variants under `03.01` |
+| FR-032 | The repository documentation shall explain the `completed/` folder as an excluded facilitator reference solution for rebuild labs. | Should | Do not treat as Copilot source context |
 
 ## Non-Functional Requirements
 
 | ID | Category | Requirement | Target |
 | --- | --- | --- | --- |
 | NFR-001 | Performance | Tick loop runs once per second without blocking the event loop. | 1 s tick interval |
-| NFR-002 | Reliability | WebSocket reconnection is handled by the client. | Auto-reconnect within 2 s |
+| NFR-002 | Reliability | SignalR reconnection is handled by the client. | Auto-reconnect within 2 s |
 | NFR-003 | Maintainability | Modules stay under 200 lines each. | All current modules comply |
 | NFR-004 | Accessibility | Floor labels and elevator IDs use semantic HTML text. | Screen-reader friendly labels |
 | NFR-005 | Portability | Runs on .NET 10.0+ with no OS-specific dependencies. | Windows, macOS, Linux |
+| NFR-006 | Onboarding | New participants can select a setup path and validate the environment from README instructions. | 15 minutes or less for Codespaces |
+| NFR-007 | Workshop repeatability | Setup and validation commands are scriptable and documented. | Commands work in Codespaces and devcontainer paths |
+| NFR-008 | Resilience | Database persistence must not block or crash the simulation when unavailable. | In-memory fallback |
+| NFR-009 | Operability | Database reset workflows preserve schema and constraints. | Delete rows, do not drop schema |
 
 ## User Experience Requirements
 
@@ -184,26 +277,18 @@ can extend in subsequent lab steps.
 
 ## Data Requirements
 
-- Entities: `Building`, `Elevator`, `Passenger`.
+- Entities: `Building`, `Elevator`, `Passenger`; optional SQL Server/Azure SQL tables for persistence and future analytics labs.
 - Required fields:
-  - Passenger: `Id`, `OriginFloor`, `DestinationFloor`,
-    `RequestedTick`, `Direction` (derived).
-  - Elevator: `Id`, `CurrentFloor`, `Direction`,
-    `DoorState`, `Capacity`, `Passengers`,
-    `ScheduledStops`, `DoorTicksRemaining`,
-    `PassengersMoved`.
-  - Building: `FloorCount`, `Elevators`,
-    `WaitingPassengers`, `PendingPassengers`, `Tick`,
-    `Paused`, `StatusMessage`,
-    `TotalPassengerWaitTimeSeconds`,
-    `BoardedPassengerCount`,
-    `AveragePassengerWaitTimeSeconds`,
-    `WaitTimeUpdatedTick`.
-- Data lifecycle: All state is in-memory; resets on server
-  restart.
+  - Passenger: `Id`, `OriginFloor`, `DestinationFloor`, `RequestedTick`, `Direction` (derived).
+  - Elevator: `Id`, `CurrentFloor`, `Direction`, `DoorState`, `Capacity`, `Passengers`, `ScheduledStops`, `DoorTicksRemaining`, `PassengersMoved`.
+  - Building: `FloorCount`, `Elevators`, `WaitingPassengers`, `PendingPassengers`, `Tick`, `Paused`, `StatusMessage`, `TotalPassengerWaitTimeSeconds`, `BoardedPassengerCount`, `AveragePassengerWaitTimeSeconds`, `WaitTimeUpdatedTick`.
+- Data lifecycle: Core simulation state is in-memory and resets on server restart or `POST /api/restart`. SQL Server rows are written only when `DatabaseConnectionString` is set. `POST /api/restart` removes rows from `PassengerEvents` and `SimulationRuns`, then prepares a fresh run row.
 - Validation: Floor numbers 1–5, origin ≠ destination.
-- Seed data: Elevators start at floors 1–4. No passengers
-  at boot.
+- Seed data: Elevators start at floors 1–4. No passengers at boot.
+- Optional SQL Server/Azure SQL tables:
+  - `SimulationRuns`: run-level metadata, dispatcher strategy, tick interval, spawn chance, movement totals, and wait time statistics.
+  - `PassengerEvents`: passenger lifecycle events with event type (`Created`, `Assigned`, `Boarded`, `Exited`), timestamps, and floor information.
+  - `Scenarios`: named scenario rows for future replay labs.
 - Privacy: No PII collected.
 
 ## API and Integration Requirements
@@ -227,10 +312,7 @@ can extend in subsequent lab steps.
 
 ## Technical Approach
 
-Keep simulation logic in the `ElevatorSimulation` project, API logic
-in the `ElevatorApi` project, Blazor UI in the `ElevatorUI` project, and tests
-in the `ElevatorTests` project. All state lives in memory inside a
-single `SimulationEngine` instance protected by async locks in C#.
+Keep simulation logic in the `ElevatorSimulation` project, API logic in the `ElevatorApi` project, Blazor UI in the `ElevatorUI` project, and tests in the `ElevatorTests` project. All state lives in memory inside a single `SimulationEngine` instance protected by async locks in C#. Optional database persistence is handled via Entity Framework Core with SQL Server or Azure SQL, writing to `SimulationRuns` and `PassengerEvents` tables when `DatabaseConnectionString` is configured.
 
 ### Proposed Components
 
